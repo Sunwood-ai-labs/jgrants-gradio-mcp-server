@@ -51,20 +51,71 @@
 
 ### 前提条件
 
+**方法1: uv を使用（推奨）**
+- [uv](https://docs.astral.sh/uv/) (高速Pythonパッケージマネージャー)
+- Python 3.11以上（uvが自動インストール可能）
+
+**方法2: Docker Compose を使用**
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+**方法3: pip を使用（従来）**
 - Python 3.11以上
 - pip (Pythonパッケージマネージャー)
 
-### 🚀 30秒で起動（Web UI + MCPサーバー）
+### 🚀 30秒で起動
+
+#### 方法1: uv を使用（推奨・最速）
 
 ```bash
 # 1. リポジトリをクローン
 git clone https://github.com/Sunwood-ai-labs/jgrants-gradio-mcp-server.git
 cd jgrants-gradio-mcp-server
 
-# 2. 依存パッケージをインストール
-pip install -r requirements.txt
+# 2. uvで依存関係を同期（初回のみ）
+uv sync
 
 # 3. 起動（Gradio UI + MCPサーバーが同時に動作）
+uv run python -m jgrants_mcp_server
+```
+
+#### 方法2: Docker Compose を使用
+
+```bash
+# 1. リポジトリをクローン
+git clone https://github.com/Sunwood-ai-labs/jgrants-gradio-mcp-server.git
+cd jgrants-gradio-mcp-server
+
+# 2. Docker Composeで起動
+docker-compose up -d
+
+# ログ確認
+docker-compose logs -f
+
+# 停止
+docker-compose down
+```
+
+#### 方法3: pip を使用（従来）
+
+```bash
+# 1. リポジトリをクローン
+git clone https://github.com/Sunwood-ai-labs/jgrants-gradio-mcp-server.git
+cd jgrants-gradio-mcp-server
+
+# 2. Python仮想環境の作成
+python -m venv venv
+
+# 3. 仮想環境の有効化
+# macOS/Linux:
+source venv/bin/activate
+# Windows:
+# venv\Scripts\activate
+
+# 4. 依存パッケージをインストール
+pip install -r requirements.txt
+
+# 5. 起動（Gradio UI + MCPサーバーが同時に動作）
 python -m jgrants_mcp_server
 ```
 
@@ -74,25 +125,22 @@ python -m jgrants_mcp_server
 
 Gradio 5のネイティブMCP機能により、単一のサーバーで両方の機能を提供！
 
-### 環境セットアップ
+### uvのインストール
+
+uvは高速で信頼性の高いPythonパッケージマネージャーです。
 
 ```bash
-# リポジトリのクローン
-git clone https://github.com/digital-go-jp/jgrants-mcp-server.git
-cd jgrants-mcp-server
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Python仮想環境の作成
-python -m venv venv
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-# 仮想環境の有効化
-# macOS/Linux:
-source venv/bin/activate
-# Windows:
-# venv\Scripts\activate
-
-# 依存パッケージのインストール
-pip install -r requirements.txt
+# pipx経由（すべてのプラットフォーム）
+pipx install uv
 ```
+
+詳細は [uvドキュメント](https://docs.astral.sh/uv/) を参照してください。
 
 ### 環境変数（オプション）
 
@@ -112,6 +160,34 @@ export JGRANTS_FILES_DIR=/tmp/jgrants_files
 
 ### 🚀 基本起動（Web UI + MCP統合）
 
+**uvを使用する場合:**
+```bash
+# デフォルト起動（ポート7860）
+uv run python -m jgrants_mcp_server
+
+# カスタムポート指定
+uv run python -m jgrants_mcp_server --port 8080
+
+# 公開リンク生成（外部アクセス可能）
+uv run python -m jgrants_mcp_server --share
+```
+
+**Docker Composeを使用する場合:**
+```bash
+# バックグラウンドで起動
+docker-compose up -d
+
+# フォアグラウンドで起動（ログを表示）
+docker-compose up
+
+# 停止
+docker-compose down
+
+# 再起動
+docker-compose restart
+```
+
+**pipを使用する場合:**
 ```bash
 # デフォルト起動（ポート7860）
 python -m jgrants_mcp_server
@@ -145,6 +221,19 @@ python -m jgrants_mcp_server --help
 ```bash
 # MCPサーバー機能を無効にしてWeb UIのみ起動
 python -m jgrants_mcp_server --no-mcp
+# uvの場合
+uv run python -m jgrants_mcp_server --no-mcp
+```
+
+### 🐳 Docker環境変数のカスタマイズ
+
+`docker-compose.yml`の`environment`セクションを編集して環境変数をカスタマイズできます：
+
+```yaml
+environment:
+  - JGRANTS_FILES_DIR=/app/jgrants_files
+  - API_BASE_URL=https://api.jgrants-portal.go.jp/exp/v1/public
+  # カスタム設定を追加
 ```
 
 ## Claude Desktop との連携
