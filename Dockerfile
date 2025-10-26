@@ -45,12 +45,16 @@ ENV PATH="/app/.venv/bin:$PATH" \
 # Create directory for downloaded files
 RUN mkdir -p ${JGRANTS_FILES_DIR}
 
-# Expose port
+# Expose port for Gradio UI and MCP server
 EXPOSE 7860
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import httpx; httpx.get('http://localhost:7860/').raise_for_status()" || exit 1
 
-# Run the application
+# Run the application with Gradio 5 native MCP server enabled
+# This will start both:
+# - Gradio Web UI (accessible at http://localhost:7860)
+# - MCP Server (Gradio 5.32.0+ native MCP support)
+# To disable MCP server, add --no-mcp flag
 CMD ["python", "-m", "jgrants_mcp_server", "--host", "0.0.0.0", "--port", "7860"]

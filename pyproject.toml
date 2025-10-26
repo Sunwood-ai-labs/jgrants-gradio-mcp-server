@@ -30,7 +30,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "pdfplumber>=0.11.7",
     "markitdown>=0.1.3",
-    "gradio>=5.0.0",
+    "gradio>=5.32.0",  # Native MCP server support requires 5.32.0+
 ]
 
 [project.optional-dependencies]

@@ -86,7 +86,7 @@ uv run python -m jgrants_mcp_server
 git clone https://github.com/Sunwood-ai-labs/jgrants-gradio-mcp-server.git
 cd jgrants-gradio-mcp-server
 
-# 2. Docker Composeで起動
+# 2. Docker Composeで起動（MCPサーバーが自動的に有効になります）
 docker-compose up -d
 
 # ログ確認
@@ -95,6 +95,11 @@ docker-compose logs -f
 # 停止
 docker-compose down
 ```
+
+**Docker環境での機能:**
+- 🌐 **Web UI**: http://localhost:7860
+- 🤖 **MCP Server**: デフォルトで有効（Gradio 5 ネイティブ）
+- 💾 **データ永続化**: ダウンロードファイルは Docker volume に保存
 
 #### 方法3: pip を使用（従来）
 
@@ -234,6 +239,21 @@ environment:
   - JGRANTS_FILES_DIR=/app/jgrants_files
   - API_BASE_URL=https://api.jgrants-portal.go.jp/exp/v1/public
   # カスタム設定を追加
+```
+
+### 🔧 DockerでMCPサーバーを無効化する場合
+
+MCPサーバーを無効化してWeb UIのみを使用したい場合は、`Dockerfile`の最終行を以下のように変更してください：
+
+```dockerfile
+# Dockerfileの最終行を変更
+CMD ["python", "-m", "jgrants_mcp_server", "--host", "0.0.0.0", "--port", "7860", "--no-mcp"]
+```
+
+その後、コンテナを再ビルドして起動します：
+
+```bash
+docker-compose up -d --build
 ```
 
 ## Claude Desktop との連携
