@@ -1,22 +1,24 @@
-# Jグランツ MCP Server & Gradio App
+# Jグランツ MCP Server (Gradio 5 Native)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![FastMCP](https://img.shields.io/badge/FastMCP-2.12.2%2B-green.svg)](https://gofastmcp.com)
-[![Gradio](https://img.shields.io/badge/Gradio-5.0%2B-orange.svg)](https://gradio.app)
+[![Gradio](https://img.shields.io/badge/Gradio-5.32.0%2B-orange.svg)](https://gradio.app)
+[![MCP](https://img.shields.io/badge/MCP-Native-blue.svg)](https://modelcontextprotocol.io)
 
-デジタル庁が運用する補助金電子申請システム「**Jグランツ**」の公開APIを活用したハイブリッドアプリケーション。
+デジタル庁が運用する補助金電子申請システム「**Jグランツ**」の公開APIを活用した統合アプリケーション。
 
-**✨ 2つのモードで利用可能:**
-- 🤖 **MCPサーバーモード**: LLM（Claude Desktop等）から自然言語で補助金検索
-- 🌐 **Gradio Webアプリモード**: ブラウザから直接アクセスできる使いやすいUI
+**🚀 Gradio 5のネイティブMCP機能を使用:**
+- 🌐 **Web UI**: ブラウザから直感的に補助金検索
+- 🤖 **MCP Server**: Claude DesktopなどのLLMから自然言語で操作
+- ⚡ **ワンコマンド起動**: `launch(mcp_server=True)`で両方同時に動作！
 
 
 ## 特徴
 
-### 🚀 ハイブリッドモード
-- **デュアルモード起動**: MCPサーバーとGradio Webアプリを同時起動可能
-- **柔軟な運用**: 用途に応じてモードを選択（MCP only / Gradio only / 両方）
+### 🎯 Gradio 5ネイティブMCP統合
+- **シンプル設計**: `launch(mcp_server=True)`だけでUIとMCPサーバーが同時起動
+- **自動変換**: Gradio関数が自動的にMCPツールに変換
+- **統一コードベース**: UIとMCP APIを単一のコードで管理
 
 ### 🔍 検索・分析機能
 - **高度な検索**: キーワード、業種、従業員数、地域での絞り込み
@@ -28,13 +30,12 @@
 - **形式変換**: PDF、Word、Excel、ZIPなど多様な形式をMarkdownに変換
 - **BASE64対応**: 変換できないファイルはBASE64形式で取得可能
 
-### 🤖 LLM統合（MCPモード）
-- **リモート対応**: Streamable-HTTP経由でリモート接続可能
-- **自然言語検索**: Claude Desktop等のLLMから自然言語で操作
-- **動的ツール検出**: サーバーのツール変更を自動検出・適応
-- **Prompts/Resources**: LLM向けのガイドとリソースを提供
+### 🤖 LLM統合
+- **Claude Desktop対応**: MCPクライアントから直接利用可能
+- **自然言語検索**: LLMから自然言語で補助金検索
+- **ツール自動検出**: Gradio関数が自動的にMCPツールとして公開
 
-### 🌐 Webアプリ（Gradioモード）
+### 🌐 Webアプリ
 - **直感的UI**: ブラウザから簡単にアクセス
 - **タブ型インターフェース**: 検索、詳細、統計、ファイル取得など機能別タブ
 - **テーブル表示**: 検索結果を見やすい表形式で表示
@@ -53,7 +54,7 @@
 - Python 3.11以上
 - pip (Pythonパッケージマネージャー)
 
-### 🚀 30秒でGradio Webアプリを起動
+### 🚀 30秒で起動（Web UI + MCPサーバー）
 
 ```bash
 # 1. リポジトリをクローン
@@ -63,11 +64,15 @@ cd jgrants-gradio-mcp-server
 # 2. 依存パッケージをインストール
 pip install -r requirements.txt
 
-# 3. デュアルモードで起動（MCPサーバー + Gradio Webアプリ）
+# 3. 起動（Gradio UI + MCPサーバーが同時に動作）
 python -m jgrants_mcp_server
 ```
 
-ブラウザで `http://localhost:7860` を開くと、すぐに補助金検索が使えます！
+**アクセス方法:**
+- 🌐 **Web UI**: ブラウザで `http://localhost:7860` を開く
+- 🤖 **MCP**: Claude Desktopから `http://localhost:7860` に接続
+
+Gradio 5のネイティブMCP機能により、単一のサーバーで両方の機能を提供！
 
 ### 環境セットアップ
 
@@ -105,46 +110,24 @@ export JGRANTS_FILES_DIR=/tmp/jgrants_files
 
 ## サーバー起動
 
-### 🚀 デュアルモード起動（推奨）
-
-MCPサーバーとGradio Webアプリを同時に起動します：
+### 🚀 基本起動（Web UI + MCP統合）
 
 ```bash
-# 両方同時起動（デフォルト）
+# デフォルト起動（ポート7860）
 python -m jgrants_mcp_server
 
 # カスタムポート指定
-python -m jgrants_mcp_server --mcp-port 8000 --gradio-port 7860
+python -m jgrants_mcp_server --port 8080
 
-# Gradio公開リンク生成
-python -m jgrants_mcp_server --gradio-share
+# 公開リンク生成（外部アクセス可能）
+python -m jgrants_mcp_server --share
 ```
 
-起動後、以下のエンドポイントが利用可能になります：
-- **Gradio UI**: `http://localhost:7860`
-- **MCP エンドポイント**: `http://localhost:8000/mcp`
+**起動後に利用可能な機能:**
+- 🌐 **Web UI**: `http://localhost:7860`
+- 🤖 **MCP Server**: Gradioが提供するMCPエンドポイント（Claude Desktopから接続）
 
-### 🤖 MCPサーバーのみ起動
-
-```bash
-python -m jgrants_mcp_server --mode mcp --mcp-port 8000
-```
-
-または
-
-```bash
-python -m jgrants_mcp_server.core --host 127.0.0.1 --port 8000
-```
-
-### 🌐 Gradio Webアプリのみ起動
-
-```bash
-python -m jgrants_mcp_server --mode gradio --gradio-port 7860
-```
-
-ブラウザで `http://localhost:7860` にアクセスしてください。
-
-### 📋 起動オプション一覧
+### 📋 起動オプション
 
 ```bash
 python -m jgrants_mcp_server --help
@@ -152,65 +135,63 @@ python -m jgrants_mcp_server --help
 
 | オプション | デフォルト値 | 説明 |
 |-----------|------------|------|
-| `--mode` | `both` | 起動モード: `mcp`, `gradio`, `both` |
-| `--mcp-host` | `127.0.0.1` | MCPサーバーのホスト |
-| `--mcp-port` | `8000` | MCPサーバーのポート |
-| `--gradio-host` | `0.0.0.0` | Gradioアプリのホスト |
-| `--gradio-port` | `7860` | Gradioアプリのポート |
-| `--gradio-share` | `False` | Gradio公開リンクを生成 |
+| `--host` | `0.0.0.0` | サーバーホスト |
+| `--port` | `7860` | サーバーポート |
+| `--share` | `False` | Gradio公開リンクを生成 |
+| `--no-mcp` | `False` | MCP機能を無効化（Web UIのみ） |
+
+### 🔧 MCP無効化（Web UIのみ）
+
+```bash
+# MCPサーバー機能を無効にしてWeb UIのみ起動
+python -m jgrants_mcp_server --no-mcp
+```
 
 ## Claude Desktop との連携
 
-### FastMCP CLI経由での接続（推奨）
+### Gradio 5ネイティブMCP接続
 
-Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHTTPプロキシとして使用します。
-この方法はResources、Prompts、Toolsのすべての機能をサポートします。
+Gradio 5.32.0以降では、Gradioアプリが直接MCPサーバーとして動作します。
 
-1. **MCP Server を起動**:
-   ```bash
-   python -m jgrants_mcp_server.core --port 8000
-   ```
+#### ステップ1: アプリを起動
 
-2. **Claude Desktop 設定ファイルを編集**:
+```bash
+python -m jgrants_mcp_server
+```
 
-   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-   **Linux**: `~/.config/Claude/claude_desktop_config.json`
+起動メッセージで`MCP Server: ENABLED`が表示されることを確認してください。
 
-   ```json
-   {
-     "mcpServers": {
-       "jgrants": {
-         "command": "uvx",
-         "args": [
-           "fastmcp",
-           "run",
-           "http://localhost:8000/mcp"
-         ]
-       }
-     }
-   }
-   ```
+#### ステップ2: Claude Desktop設定
 
-   **備考**:
-   - localhostでうまくいかない場合は 127.0.0.1 でお試しください
-   - `uvx`は`uv`のコマンドラインツール実行機能です（`pip install uv`でインストール）
-   - `uvx`がインストールされていない場合は、`fastmcp`を直接使用することもできます：
-     ```json
-     {
-       "mcpServers": {
-         "jgrants": {
-           "command": "fastmcp",
-           "args": [
-             "run",
-             "http://localhost:8000/mcp"
-           ]
-         }
-       }
-     }
-     ```
+Claude Desktop設定ファイルを編集:
 
-4. **Claude Desktop を再起動**
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "jgrants": {
+      "command": "uvx",
+      "args": [
+        "gradio",
+        "client",
+        "http://localhost:7860"
+      ]
+    }
+  }
+}
+```
+
+**注意:**
+- Gradio 5のMCPサーバーはHTTPベースで動作します
+- `uvx`がない場合は`pip install uv`でインストール
+- ポート番号は起動時に指定したポートに合わせてください
+
+#### ステップ3: Claude Desktopを再起動
+
+設定を保存して、Claude Desktopを完全に終了してから再起動してください。
 
 ### 接続確認
 
