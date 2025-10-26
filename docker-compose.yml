@@ -1,5 +1,21 @@
 version: '3.8'
 
+# jGrants Gradio MCP Server
+#
+# This Docker Compose configuration runs a Gradio 5 application with native MCP server support.
+#
+# Features:
+# - Gradio Web UI: http://localhost:7860
+# - MCP Server: Gradio 5.32.0+ native MCP support (enabled by default)
+# - jGrants API integration for Japanese subsidy search
+#
+# Usage:
+#   docker-compose up -d          # Start with MCP server enabled
+#   docker-compose logs -f        # View logs
+#   docker-compose down           # Stop services
+#
+# To disable MCP server, modify CMD in Dockerfile to add --no-mcp flag
+
 services:
   jgrants-mcp-server:
     build:
@@ -7,10 +23,16 @@ services:
       dockerfile: Dockerfile
     container_name: jgrants-mcp-server
     ports:
+      # Port 7860: Gradio Web UI + MCP Server (Gradio 5 native MCP support)
       - "7860:7860"
     environment:
+      # jGrants data directory for downloaded files
       - JGRANTS_FILES_DIR=/app/jgrants_files
+      # jGrants public API endpoint
       - API_BASE_URL=https://api.jgrants-portal.go.jp/exp/v1/public
+      # Gradio server configuration
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7860
     volumes:
       # Persist downloaded files
       - jgrants-files:/app/jgrants_files
